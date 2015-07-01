@@ -1,0 +1,32 @@
+.list-unstyled {
+  list-style: none;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+.label {
+  border: 1px solid $label-default;
+  border-radius: .25em;
+  color: $label-default;
+  display: inline;
+  font-size: 75%;
+  font-weight: 400;
+  line-height: 1;
+  padding: .2em .3em .2em;
+  text-align: center;
+  text-transform: uppercase;
+  vertical-align: baseline;
+  white-space: nowrap;
+  // @include label-variant($label-default-bg);
+
+  // Empty labels collapse automatically (not available in IE8)
+  &:empty {
+    display: none;
+  }
+
+  // Quick fix for labels in buttons
+  .btn & {
+    position: relative;
+    top: -1px;
+  }
+}
