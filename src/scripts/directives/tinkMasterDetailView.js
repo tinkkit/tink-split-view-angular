@@ -1,6 +1,11 @@
 'use strict';
-   angular.module('tinkApp')
- .directive('tinkMasterDetailView',[function () {
+(function(module) {
+  try {
+    module = angular.module('tink.split-view');
+  } catch (e) {
+    module = angular.module('tink.split-view', []);
+  }
+ module.directive('tinkMasterDetailView',[function () {
  	return {
  		restirct:'E',
  		templateUrl:'templates/tinkMasterDetailView.html',
@@ -206,3 +211,4 @@
  		}
  	};
  }]);
+})();

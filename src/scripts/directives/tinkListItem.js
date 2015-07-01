@@ -1,6 +1,11 @@
- 'use strict';
-  angular.module('tinkApp')
- .directive('tinkListItem',[function () {
+'use strict';
+(function(module) {
+  try {
+    module = angular.module('tink.split-view');
+  } catch (e) {
+    module = angular.module('tink.split-view', []);
+  }
+ module.directive('tinkListItem',[function () {
  	return {
  		require:'^tinkListView',
  		restirct:'EA',
@@ -31,3 +36,4 @@
  		}
  	};
  }]);
+})();

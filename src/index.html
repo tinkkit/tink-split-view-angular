@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-app="tink.skeleton">
+<html ng-app="tink.split-view">
 <head>
   <meta charset="utf-8">
   <title>Tink module</title>
@@ -7,15 +7,112 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="initial-scale=1.0,user-scalable=no,minimum-scale=1.0">
   <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/tink-core/dist/tink.css" />
   <!-- endbower -->
+   
 </head>
-<body>
+<body ng-controller="MainCtrl">
 
-<tink-skeleton data-text="Skeleton is working fine!"></tink-skeleton>
+
+<tink-master-detail-view tink-init-size="30" tink-split-view-direction="vertical">
+
+  <tink-list-view data-item-change="changeData($active)" tink-active-item="activeItem.id">
+          <tink-master-detail-view tink-init-size="10" tink-split-view-direction="horizontal" class="fixed-checkboxes">
+            <tink-list-view>
+              <div class="list-mailbox-options">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <div class="radio checkbox-inline">
+                        <input type="radio" id="docsradio1" data-ng-model="filters" data-ng-value="{}" data-ng-checked="true" data-ng-change="triggerFilter(filters)" name="docsradio">
+                        <label for="docsradio1">Alle documenten</label>
+                      </div>
+                      <div class="radio checkbox-inline">
+                        <input type="radio" id="docsradio2" data-ng-model="filters" data-ng-value="{eid:false}" data-ng-change="triggerFilter(filters)" name="docsradio">
+                        <label for="docsradio2">Zonder eID</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </tink-list-view>
+            <tink-content-view>
+              <ul class="list-mailbox">
+                <li data-ng-repeat="message in messages | filter:filters | filter:extraFilters"  data-tink-list-item="message.id" data-ng-class="{'unread': message.unread}">
+                  <a title="{{message.title}} - {{message.description}}">
+                    <div>
+                      <span class="list-mailbox-icons"><span class="badge-warning" data-ng-if="message.eid">eID</span></span>
+                      <span class="list-mailbox-category">{{message.category}}</span>
+                      <span class="list-mailbox-title">{{message.title}}</span>
+                    </div>
+                    <span class="list-mailbox-description">{{message.description}}</span>
+                  </a>
+                </li>
+              </ul>
+            </tink-content-view>
+
+  </tink-list-view>
+  <tink-content-view>
+          <tink-master-detail-view tink-init-size="89" tink-split-view-direction="horizontal">
+            <tink-list-view>
+              <div class="container">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <div ng-if="selectedMessage !== undefined">
+                      <h1>{{selectedMessage.title}}</h1>
+                      <div ng-bind-html="selectedMessage.message"></div>
+                    </div>
+                    <div ng-if="selectedMessage === undefined">
+                      <p class="mailbox-loader text-center"><i class="fa fa-refresh fa-spin"><span class="sr-only">Loading…</span></i></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </tink-list-view>
+            <tink-content-view>
+              <div class="container">
+                <div class="row vertical-align-middle margin-bottom margin-top">
+                  <div class="col-xs-6">
+                    <button class="btn-primary">Handtekenen</button>
+                    <!-- <button data-ng-click="activeItem.id=activeItem.id+1;" data-ng-if="extraFilters=={}" data-ng-disabled="selectedMessage[$index+1]=undefined">Volgend bericht</button> -->
+                  </div>
+                  <div class="col-xs-6 text-right">
+                    Te ondertekenen tegen: <strong>vandaag</strong>
+                  </div>
+                </div>
+              </div>
+            </tink-content-view>
+          </tink-master-detail-view>
+  </tink-content-view>
+</tink-master-detail-view>
+
 
 <!-- bower:js -->
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-resource/angular-resource.js"></script>
+<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-touch/angular-touch.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
 <!-- endbower -->
 
-<script src="scripts/directives/skeleton.js"></script>
+<script src="scripts/directives/tinkContentView.js"></script>
+<script src="scripts/directives/tinkListItem.js"></script>
+<script src="scripts/directives/tinkListView.js"></script>
+<script src="scripts/directives/tinkMasterDetailView.js"></script>
+ <script>
+    (function(module) {
+      try {
+        module = angular.module('tink.split-view');
+      } catch (e) {
+        module = angular.module('tink.split-view', []);
+      }
+     module.controller('MainCtrl',function(){
+
+     });
+   })();
+  </script>
 </body>
 </html>
