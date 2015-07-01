@@ -1,8 +1,8 @@
 {
-  "name": "tink-skeleton-angular",
-  "version": "1.0.0",
+  "name": "tink-split-view-angular",
+  "version": "0.0.0",
   "main": [
-    "dist/tink-skeleton-angular.js"
+    "dist/tink-split-view-angular.js"
   ],
   "ignore": [
     ".*",
