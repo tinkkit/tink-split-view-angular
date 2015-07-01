@@ -1,6 +1,6 @@
 # Tink skeleton Angular directive
 
-v2.0.0
+v1.0.0
 
 ## What is this repository for?
 

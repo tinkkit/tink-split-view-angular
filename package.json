@@ -1,7 +1,7 @@
 {
   "name": "tink-split-view-angular",
   "description": "Tink split view Angular directive",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:tinkkit/tink-split-view-angular.git"
