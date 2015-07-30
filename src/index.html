@@ -14,7 +14,7 @@
 <body ng-controller="MainCtrl">
 
 
-<tink-master-detail-view tink-init-size="30"  tink-split-view-direction="vertical">
+<tink-master-detail-view tink-init-size="30" tink-is-resizable="enable"  tink-split-view-direction="vertical">
 
   <tink-list-view data-item-change="changeData($active)" tink-active-item="activeItem.id">
           <tink-master-detail-view tink-init-size="10"  tink-split-view-direction="horizontal" class="fixed-checkboxes">
@@ -73,7 +73,7 @@
               <div class="container">
                 <div class="row vertical-align-middle margin-bottom margin-top">
                   <div class="col-xs-6">
-                    <button class="btn-primary">Handtekenen</button>
+                    <button class="btn-primary" ng-click="hantek()">Handtekenen</button>
                     <!-- <button data-ng-click="activeItem.id=activeItem.id+1;" data-ng-if="extraFilters=={}" data-ng-disabled="selectedMessage[$index+1]=undefined">Volgend bericht</button> -->
                   </div>
                   <div class="col-xs-6 text-right">
@@ -122,7 +122,10 @@
     // Filters
     $scope.filters = {};
     $scope.extraFilters = {};
-
+    $scope.enable = true;
+    $scope.hantek = function(){
+      $scope.enable = !$scope.enable;
+    }
 
     $scope.changeData = function(next/*,prev*/){
       var obj = $filter('filter')($scope.messages, { id: next});

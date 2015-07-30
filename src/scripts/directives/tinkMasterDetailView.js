@@ -11,16 +11,16 @@
  		templateUrl:'templates/tinkMasterDetailView.html',
  		transclude:'true',
  		replace:true,
- 		scope:true,
+ 		scope:{
+ 			tinkIsResizable:'='
+ 		},
  		controller:function($scope,$element,$attrs){
  			var ctrl = this;
  			$element={listView:undefined,contentView:undefined,main:undefined};
  			var $split={first:undefined,second:undefined,bar:undefined};
  			var $direction='vertical';
  			var $isResizable = true;
- 			if(angular.isDefined($attrs.tinkIsResizable)) {
- 				$isResizable = $attrs.tinkIsResizable === true || $attrs.tinkIsResizable === 'true';
- 			}
+ 			
 
  			// this.setUnresizable = function() {
  			// 	$split.bar = undefined;
@@ -91,9 +91,16 @@
  				}else if($split.second === null || $split.second === undefined){
  					$split.second = $(element);
  					//Add the resize event if all the panes are added.
- 					if($isResizable){
- 						ctrl.addReziseEvent();
- 					}
+ 					$scope.$watch('tinkIsResizable',function(value){
+		 				if(angular.isDefined(value)) {
+			 				$isResizable = value === true || value === 'true';
+			 			}
+			 			if($isResizable){
+	 						ctrl.addReziseEvent();
+	 					}else{
+	 						ctrl.removeResizeEvent();
+	 					}
+ 					})
  				}else{
  					console.warn('there is already a first and second element !');
  				}
