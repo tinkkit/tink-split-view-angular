@@ -59,7 +59,7 @@
                 <div class="row">
                   <div class="col-xs-12">
                     <div ng-if="selectedMessage !== undefined">
-                      <h1>{{selectedMessage.title}}</h1>
+                      <h1 ng-bind-html="selectedMessage.title"></h1>
                       <div ng-bind-html="selectedMessage.message"></div>
                     </div>
                     <div ng-if="selectedMessage === undefined">
@@ -109,8 +109,34 @@
       } catch (e) {
         module = angular.module('tink.split-view', []);
       }
-     module.controller('MainCtrl',function($scope){
+     module.controller('MainCtrl',function($scope,$filter){
 
+      // Which item to highlight when loaded
+    $scope.activeItem = {
+      id: 1
+    };
+
+    // Which message is selected
+    $scope.selectedMessage = undefined;
+
+    // Filters
+    $scope.filters = {};
+    $scope.extraFilters = {};
+
+
+    $scope.changeData = function(next/*,prev*/){
+      var obj = $filter('filter')($scope.messages, { id: next});
+      if(obj.length === $scope.messages.length && next === undefined){
+        $scope.selectedMessage = undefined;
+      }else{
+        obj[0].unread = false;
+        $scope.selectedMessage = obj[0];
+      }
+    };
+
+    $scope.triggerFilter = function(value) {
+      $scope.filters = value;
+    };
 
 
     $scope.messages = [

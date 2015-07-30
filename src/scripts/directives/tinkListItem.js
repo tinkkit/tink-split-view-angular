@@ -3,7 +3,7 @@
   try {
     module = angular.module('tink.split-view');
   } catch (e) {
-    module = angular.module('tink.split-view', []);
+    module = angular.module('tink.split-view',['ngSanitize']);
   }
  module.directive('tinkListItem',[function () {
  	return {
