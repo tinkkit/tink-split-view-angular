@@ -1,6 +1,6 @@
 {
   "name": "tink-split-view-angular",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": [
     "dist/tink-split-view-angular.js"
   ],
