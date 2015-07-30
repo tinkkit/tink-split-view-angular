@@ -18,8 +18,8 @@
  			var $split={first:undefined,second:undefined,bar:undefined};
  			var $direction='vertical';
  			var $isResizable = true;
- 			if($attrs.tinkIsResizable) {
- 				$isResizable = $attrs.tinkIsResizable;
+ 			if(angular.isDefined($attrs.tinkIsResizable)) {
+ 				$isResizable = $attrs.tinkIsResizable === true || $attrs.tinkIsResizable === 'true';
  			}
 
  			// this.setUnresizable = function() {
@@ -91,7 +91,9 @@
  				}else if($split.second === null || $split.second === undefined){
  					$split.second = $(element);
  					//Add the resize event if all the panes are added.
- 					ctrl.addReziseEvent();
+ 					if($isResizable){
+ 						ctrl.addReziseEvent();
+ 					}
  				}else{
  					console.warn('there is already a first and second element !');
  				}

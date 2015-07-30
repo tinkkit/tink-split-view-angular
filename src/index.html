@@ -14,10 +14,10 @@
 <body ng-controller="MainCtrl">
 
 
-<tink-master-detail-view tink-init-size="30" tink-split-view-direction="vertical">
+<tink-master-detail-view tink-init-size="30"  tink-split-view-direction="vertical">
 
   <tink-list-view data-item-change="changeData($active)" tink-active-item="activeItem.id">
-          <tink-master-detail-view tink-init-size="10" tink-split-view-direction="horizontal" class="fixed-checkboxes">
+          <tink-master-detail-view tink-init-size="10"  tink-split-view-direction="horizontal" class="fixed-checkboxes">
             <tink-list-view>
               <div class="list-mailbox-options">
                 <div class="container">
@@ -49,8 +49,8 @@
                   </a>
                 </li>
               </ul>
-            </tink-content-view>
-
+                </tink-content-view>
+    </tink-master-detail-view>
   </tink-list-view>
   <tink-content-view>
           <tink-master-detail-view tink-init-size="89" tink-split-view-direction="horizontal">
