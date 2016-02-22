@@ -16,6 +16,8 @@ module.exports = function (grunt) {
     currentversion = semversion.inc(currentversion, bump);
   }
 
+  var serveStatic = require('serve-static');
+
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'src',
@@ -133,7 +135,7 @@ module.exports = function (grunt) {
       options: {
         port: 9000,
         // Change this to '0.0.0.0' to access the server from outside.
-        hostname: '0.0.0.0',
+        hostname: 'localhost',
         livereload: 35729
       },
       livereload: {
@@ -141,12 +143,12 @@ module.exports = function (grunt) {
           open: true,
           middleware: function (connect) {
             return [
-              connect.static('.tmp'),
+              serveStatic('.tmp'),
               connect().use(
                 '/bower_components',
-                connect.static('./bower_components')
+                serveStatic('./bower_components')
               ),
-              connect.static(appConfig.app)
+              serveStatic(appConfig.app)
             ];
           }
         }
@@ -156,13 +158,13 @@ module.exports = function (grunt) {
           port: 9001,
           middleware: function (connect) {
             return [
-              connect.static('.tmp'),
-              connect.static('test'),
+              serveStatic('.tmp'),
+              serveStatic('test'),
               connect().use(
                 '/bower_components',
-                connect.static('./bower_components')
+                serveStatic('./bower_components')
               ),
-              connect.static(appConfig.app)
+              serveStatic(appConfig.app)
             ];
           }
         }
@@ -411,7 +413,7 @@ module.exports = function (grunt) {
     'uglify:dist',
     'concurrent:dist',
     'autoprefixer',
-    // 'cssUrlEmbed',
+    'cssUrlEmbed',
     'usemin',
     'copy:styles',
     'cssmin',
