@@ -1,0 +1,217 @@
+// Tabula rasa
+@import "../../bower_components/tink-core/dist/tink/variables";
+@import "../../bower_components/tink-core/dist/tink/functions";
+@import "../../bower_components/tink-core/dist/tink/mixins";
+
+
+/**
+ * Split view
+ */
+
+%split-view {
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	z-index: layer("base");
+}
+
+.split-handle {
+	// background-color: rgba(255,0,0,.32); // Uncomment for testing its placement
+	position: absolute;
+}
+
+.split-pane {
+	display: block;
+	overflow: auto;
+	position: absolute;
+}
+
+.split-view-vertical {
+	@extend %split-view;
+
+	> .split-pane {
+		bottom: 0;
+		top: 0;
+		width: 50%;
+
+		&:first-of-type {
+			border-right: 1px solid $gray-light;
+			left: 0;
+		}
+
+		&:last-of-type {
+			right: 0;
+		}
+	}
+
+	> .split-handle {
+		bottom: 0;
+		cursor: col-resize;
+		left: calc(50% - 3px);
+		top: 0;
+		width: 5px;
+		z-index: layer("pseudo");
+	}
+}
+
+.split-view-horizontal {
+	@extend %split-view;
+
+	> .split-pane {
+		height: 50%;
+		left: 0;
+		right: 0;
+
+		&:first-child {
+			border-bottom: 1px solid $gray-light;
+			top: 0;
+		}
+
+		&:last-child {
+			bottom: 0;
+		}
+	}
+
+	> .split-handle {
+		left: 0;
+		cursor: row-resize;
+		height: 5px;
+		right: 0;
+		top: calc(50% - 3px);
+		z-index: layer("pseudo");
+	}
+}
+
+
+
+/**
+ * Mailbox
+ */
+
+.list-mailbox {
+  @extend .list-unstyled;
+
+  > li {
+    border-bottom: 1px solid $gray-lighter;
+
+    &.unread {
+      > a {
+        color: $black;
+
+        .list-mailbox-title {
+          font-weight: 700;
+        }
+
+        &:before {
+          background-color: $brand-info;
+          border-radius: 50%;
+          content: '';
+          display: block;
+          height: rem(8);
+          left: rem(10);
+          position: absolute;
+          top: rem(19);
+          width: rem(8);
+        }
+      }
+    }
+
+    &.active {
+      > a {
+        background-color: rgba($brand-light, .16);
+        color: $brand;
+
+        &:hover,
+        &:active,
+        &:focus {
+          background-color: rgba($brand-light, .16);
+        }
+
+        .list-mailbox-description {
+          color: $brand;
+        }
+      }
+    }
+
+    > a {
+      color: $text-color;
+      cursor: pointer;
+      display: block;
+      padding: rem(12 12 12 24);
+      position: relative;
+      text-decoration: none;
+
+      &:hover,
+      &:active,
+      &:focus {
+        background-color: rgba($black, .05);
+        color: $brand;
+
+        .list-mailbox-description {
+          color: $brand;
+        }
+      }
+
+      > div {
+        clear: both;
+        width: 100%;
+      }
+
+      .list-mailbox-description {
+        color: $gray;
+      }
+    }
+  }
+
+  &-options {
+    background-color: $gray-lighter;
+    height: 100%;
+    padding: 10px 0 8px;
+    width: 100%;
+  }
+
+  &-icons {
+    float: left;
+    margin: rem(-1 4 0 0);
+  }
+
+  &-title {
+    @include text-overflow();
+    display: block;
+    font-weight: 600;
+  }
+
+  &-category {
+    @extend .label;
+    float: right;
+    margin: rem(1 0 0 8);
+  }
+
+  &-description {
+    @include text-overflow();
+    display: block;
+  }
+}
+
+
+/**
+ * HTML addenda
+ */
+
+html {
+  &.col-resize {
+    cursor: col-resize;
+  }
+
+  &.row-resize {
+    cursor: row-resize;
+  }
+
+  &.has-split-view {
+    .main {
+      position: static;
+      height: 100%;
+    }
+  }
+}

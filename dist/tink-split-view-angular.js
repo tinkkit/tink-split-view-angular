@@ -189,22 +189,93 @@
   } catch (e) {
     module = angular.module('tink.split-view',['ngSanitize']);
   }
- module.directive('tinkMasterDetailView',[function () {
- 	return {
- 		restirct:'E',
- 		templateUrl:'templates/tinkMasterDetailView.html',
- 		transclude:'true',
- 		replace:true,
- 		scope:{
- 			tinkIsResizable:'='
- 		},
- 		controller:function($scope,$element,$attrs){
- 			var ctrl = this;
- 			$element={listView:undefined,contentView:undefined,main:undefined};
- 			var $split={first:undefined,second:undefined,bar:undefined};
- 			var $direction='vertical';
- 			var $isResizable = true;
- 			
+  module.directive('tinkMasterDetailView',[function () {
+    return {
+     restirct:'E',
+     templateUrl:'templates/tinkMasterDetailView.html',
+     transclude:'true',
+     replace:true,
+     scope:{
+      tinkIsResizable:'='
+    },
+    controller:function($scope,$element){
+      var ctrl = this;
+      $element={listView:undefined,contentView:undefined,main:undefined};
+      var $split={first:undefined,second:undefined,bar:undefined};
+      var $direction='vertical';
+      var $isResizable = true;
+
+      var pointerEventToXY = function(e){
+        var out = {x:0, y:0};
+        if(e.type === 'touchstart' || e.type === 'touchmove' || e.type === 'touchend' || e.type === 'touchcancel'){
+          var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+          out.x = touch.pageX;
+          out.y = touch.pageY;
+        } else if (e.type === 'mousedown' || e.type === 'mouseup' || e.type === 'mousemove' || e.type === 'mouseover'|| e.type === 'mouseout' || e.type === 'mouseenter' || e.type === 'mouseleave') {
+          out.x = e.pageX;
+          out.y = e.pageY;
+        }
+        return out;
+      };
+
+      function addview(element){
+				//check if this is the first or the second view !
+        if($split.first === null || $split.first === undefined){
+          $split.first = $(element);
+ 					// console.log($isResizable);
+ 					// if($isResizable != false) {
+ 						// console.log($isResizable);
+ 						$split.bar = $('<div class="split-handle"></div>');
+ 						$(element).after($split.bar);
+ 					// }
+ 				}else if($split.second === null || $split.second === undefined){
+ 					$split.second = $(element);
+ 					//Add the resize event if all the panes are added.
+ 					$scope.$watch('tinkIsResizable',function(value){
+            if(angular.isDefined(value)) {
+              $isResizable = value === true || value === 'true';
+            }
+            if($isResizable){
+              ctrl.addReziseEvent();
+            }else{
+              ctrl.removeResizeEvent();
+            }
+          });
+ 				}else{
+ 					console.warn('there is already a first and second element !');
+ 				}
+ 			}
+
+      function changeX(e){
+        // console.log("Change X");
+        // var currentWidth = $split.first.outerWidth(true);
+        // console.log(currentWidth);
+        // if(currentWidth > 300) {
+        var pageX = pointerEventToXY(e).x;
+        var x = (pageX-$split.first.offset().left)/$element.main.outerWidth(true) *100;
+        if(x > 10 && x < 90){
+          $split.first.css('width',x+'%');
+          $split.bar.css('left','calc('+x+'% - 3px)');
+          $split.second.css('width',(100-x)+'%');
+        }
+        // } else {
+        //  $split.first.width(301);
+        //  $split.bar.css('left','calc('+x+'% - 3px)');
+        //  $split.second.width((100-x)+'%');
+        // }
+      }
+
+      function changeY(e){
+        // console.log("Change Y");
+        var pageY = pointerEventToXY(e).y;
+        var y = (pageY-$split.first.offset().top)/$element.main.outerHeight(true) * 100;
+        if(y > 10 && y < 90){
+          // $split.first.height(y+'%');
+          $split.first.css('height',y+'%');
+          $split.bar.css('top','calc('+y+'% - 3px)');
+          $split.second.css('height',100-y+'%');
+        }
+      }
 
  			// this.setUnresizable = function() {
  			// 	$split.bar = undefined;
@@ -223,175 +294,104 @@
 
  					$split.first = undefined;
  					if($split.bar !== null) {
-	 					$split.bar.remove();
-	 					$split.bar = undefined;
-	 				}
- 				}else if($($split.second).get(0) === $(element).get(0)){
- 					$split.second = undefined;
- 				}
- 			};
+             $split.bar.remove();
+             $split.bar = undefined;
+           }
+         }else if($($split.second).get(0) === $(element).get(0)){
+          $split.second = undefined;
+        }
+      };
 
- 			this.setInitSize = function(size){
- 				size = parseInt(size);
- 				if(size >=7 && size <= 90 && $split.first && $split.second){
- 					if($direction === 'horizontal'){
- 						$split.first.height(size-1+'%');
-	    				$split.second.height((100-size)+'%');
-	    				if($split.bar !== undefined) {
-		    				$split.bar.css('top','calc('+size+'% - 3px)');
-		    			}
- 					}else{
- 						$split.first.width(size-1+'%');
-	    				$split.second.width((100-size)+'%');
-	    				if($split.bar !== undefined) {
-		    				$split.bar.css('left','calc('+size+'% - 3px)');
-		    			}
- 					}
- 				}
- 			};
+      this.setInitSize = function(size){
+        size = parseInt(size);
+        if(size >=7 && size <= 90 && $split.first && $split.second){
+          if($direction === 'horizontal'){
+            $split.first.css('height',size+'%');
+            $split.second.css('height',100-size+'%');
+            if($split.bar !== undefined) {
+              $split.bar.css('top','calc('+size+'% - 3px)');
+            }
+          }else{
+            $split.first.css('width',size+'%');
+            $split.second.css('width',100-size+'%');
+            if($split.bar !== undefined) {
+              $split.bar.css('left','calc('+size+'% - 3px)');
+            }
+          }
+        }
+      };
 
- 			this.setVertical = function(){
- 				$direction = 'vertical';
- 			};
+      this.setVertical = function(){
+        $direction = 'vertical';
+      };
 
- 			this.setHorizontal = function(){
- 				$direction = 'horizontal';
- 			};
+      this.setHorizontal = function(){
+        $direction = 'horizontal';
+      };
 
- 			this.setMain = function(element){
- 				$element.main = element;
- 			};
+      this.setMain = function(element){
+        $element.main = element;
+      };
 
- 			function addview(element){
-					//check if this is the first or the second view !
- 				if($split.first === null || $split.first === undefined){
- 					$split.first = $(element);
- 					// console.log($isResizable);
- 					// if($isResizable != false) {
- 						// console.log($isResizable);
- 						$split.bar = $('<div class="split-handle"></div>');
- 						$(element).after($split.bar);
- 					// }
- 				}else if($split.second === null || $split.second === undefined){
- 					$split.second = $(element);
- 					//Add the resize event if all the panes are added.
- 					$scope.$watch('tinkIsResizable',function(value){
-		 				if(angular.isDefined(value)) {
-			 				$isResizable = value === true || value === 'true';
-			 			}
-			 			if($isResizable){
-	 						ctrl.addReziseEvent();
-	 					}else{
-	 						ctrl.removeResizeEvent();
-	 					}
- 					})
- 				}else{
- 					console.warn('there is already a first and second element !');
- 				}
- 			}
+      this.addReziseEvent = function(){
+        if($split.bar !== undefined) {
+          $split.bar.bind('mousedown touchstart',function(/*e*/){
+            $(document).bind('mousemove touchmove',function (e) {
+              if($direction==='vertical'){
+                $('html').addClass('col-resize');
+                changeX(e);
 
- 			 var pointerEventToXY = function(e){
-		      var out = {x:0, y:0};
-		      if(e.type === 'touchstart' || e.type === 'touchmove' || e.type === 'touchend' || e.type === 'touchcancel'){
-		        var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-		        out.x = touch.pageX;
-		        out.y = touch.pageY;
-		      } else if (e.type === 'mousedown' || e.type === 'mouseup' || e.type === 'mousemove' || e.type === 'mouseover'|| e.type === 'mouseout' || e.type === 'mouseenter' || e.type === 'mouseleave') {
-		        out.x = e.pageX;
-		        out.y = e.pageY;
-		      }
-		      return out;
-		    };
+              } else if($direction ==='horizontal'){
+                $('html').addClass('row-resize');
+                changeY(e);
+              }
+              return false;
+            });
+            $(document).bind('mouseup touchend',function(){
+  						//var x = parseInt($split.bar.css('left'))/$(document).innerWidth() *100;
+  						//$split.bar.css('left','calc('+x+'% + 3px)');
+  						$('html').removeClass('row-resize').removeClass('col-resize');
+  						$(document).unbind('mousemove touchmove mouseup touchend');
+  						return false;
+            });
+            return false;
+          });
+        }
+      };
 
-	    function changeX(e){
-	    	// console.log("Change X");
-	    	// var currentWidth = $split.first.outerWidth(true);
-	    	// console.log(currentWidth);
-	    	// if(currentWidth > 300) {
-	    		var pageX = pointerEventToXY(e).x;
-		    	var x = (pageX-$split.first.offset().left)/$element.main.outerWidth(true) *100;
-		    	if(x > 10 && x < 90){
-		    		$split.first.width(x-1+'%');
-		    		$split.bar.css('left','calc('+x+'% - 3px)');
-		    		$split.second.width((100-x)+'%');
-		    	}
-	    	// } else {
-	    	// 	$split.first.width(301);
-	    	// 	$split.bar.css('left','calc('+x+'% - 3px)');
-	    	// 	$split.second.width((100-x)+'%');
-	    	// }
-	    }
+      this.removeResizeEvent = function(){
+        if($split.bar !== null) {
+          $split.bar.unbind('mousedown touchstart');
+        }
+      };
+    },
 
-	    function changeY(e){
-	    	// console.log("Change Y");
-	    	var pageY = pointerEventToXY(e).y;
-	    	var y = (pageY-$split.first.offset().top)/$element.main.outerHeight(true) * 100;
-		    if(y > 10 && y < 90){
-		    	$split.first.height(y-1+'%');
-		    	$split.bar.css('top','calc('+y+'% - 3px)');
-		    	$split.second.height((100-y)+'%');
-		    }
-	    }
+    link:function(scope,elem,attr,ctrl){
+      ctrl.setMain($(elem));
+      if(attr.tinkSplitViewDirection){
+        if(attr.tinkSplitViewDirection === 'horizontal'){
+          elem.addClass('split-view-horizontal');
+          ctrl.setHorizontal();
+        }else{
+          elem.addClass('split-view-vertical');
+          ctrl.setVertical();
+        }
+      }else{
+        elem.addClass('split-view-vertical');
+        ctrl.setVertical();
+      }
 
- 			this.addReziseEvent = function(){
- 				if($split.bar !== undefined) {
-	 				$split.bar.bind('mousedown touchstart',function(/*e*/){
-					   $(document).bind('mousemove touchmove',function (e) {
-					    if($direction==='vertical'){
-					  		$('html').addClass('col-resize');
-					    	changeX(e);
-
-					    } else if($direction ==='horizontal'){
-					    	$('html').addClass('row-resize');
-					    	changeY(e);
-					    }
-					    return false;
-						});
-						$(document).bind('mouseup touchend',function(){
-							//var x = parseInt($split.bar.css('left'))/$(document).innerWidth() *100;
-							//$split.bar.css('left','calc('+x+'% + 3px)');
-							$('html').removeClass('row-resize').removeClass('col-resize');
-							$(document).unbind('mousemove touchmove mouseup touchend');
-							return false;
-			 			});
-						return false;
-	 				});
- 				}
- 			};
-
- 			this.removeResizeEvent = function(){
- 				if($split.bar !== null) {
-	 				$split.bar.unbind('mousedown touchstart');
-	 			}
- 			};
- 		},
-
- 		link:function(scope,elem,attr,ctrl){
- 			ctrl.setMain($(elem));
- 			if(attr.tinkSplitViewDirection){
- 				if(attr.tinkSplitViewDirection === 'horizontal'){
- 					elem.addClass('split-view-horizontal');
- 					ctrl.setHorizontal();
- 				}else{
- 					elem.addClass('split-view-vertical');
- 					ctrl.setVertical();
- 				}
- 			}else{
- 				elem.addClass('split-view-vertical');
- 				ctrl.setVertical();
- 			}
-
- 			if(attr.tinkInitSize){
- 				ctrl.setInitSize(attr.tinkInitSize);
- 			}
+      if(attr.tinkInitSize){
+        ctrl.setInitSize(attr.tinkInitSize);
+      }
 
  			// if(attr.tinkIsResizable){
  			// 	ctrl.setUnresizable();
  			// }
 
-			scope.$on('$destroy',function handleDestroyEvent() {
-				ctrl.removeResizeEvent();
-			});
+      scope.$on('$destroy',function handleDestroyEvent() {
+        ctrl.removeResizeEvent();
+      });
 
 			// scope.addResizer = function(){
 			//  	var x = e.pageX - $('#sidebar').offset().left;
@@ -401,9 +401,9 @@
 			// 	}
 			// }
 
- 		}
- 	};
- }]);
+    }
+  };
+}]);
 })();;angular.module('tink.split-view').run(['$templateCache', function($templateCache) {
   'use strict';
 
