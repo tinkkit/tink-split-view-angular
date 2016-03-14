@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "main": [
-    "dist/tink-split-view-angular.js"
+    "dist/tink-split-view-angular.js",
+    "dist/split-view.css"
   ],
   "ignore": [
     ".*",
